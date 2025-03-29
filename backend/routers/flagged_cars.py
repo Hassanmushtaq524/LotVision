@@ -13,7 +13,7 @@ import random
 
 
 
-MAX_RETRIES = 10
+MAX_RETRIES = 4
 RETRY_DELAY = 2
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=GEMINI_API_KEY)

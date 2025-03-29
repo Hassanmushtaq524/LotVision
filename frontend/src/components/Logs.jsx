@@ -38,11 +38,11 @@ const Logs = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className='w-full flex justify-center'>Loading...</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className='w-full flex justify-center'>Error: {error}</div>;
   }
 
   return (
