@@ -58,22 +58,22 @@ def get_cars(request: Request, db: Session = db_dependency):
             model="gemini-2.0-flash",
             contents=prompt
         )
-
-        retries = 0
-        suspicious_data = None
-        while retries < MAX_RETRIES:
-            try:
-                gemini_response_text = gemini_response.text
+        gemini_response_text = gemini_response.text
                 
-                # Attempt to parse the Gemini response text as JSON
-                suspicious_data = json.loads(gemini_response_text)
-                break 
-            except json.JSONDecodeError as e:
-                retries += 1
-                if retries >= MAX_RETRIES:
-                    raise HTTPException(status_code=500, detail="Failed to parse Gemini response after multiple attempts")
-                # Wait for a brief moment before retrying
-                time.sleep(RETRY_DELAY)
+        # Attempt to parse the Gemini response text as JSON
+        suspicious_data = json.loads(gemini_response_text)
+        # retries = 0
+        # suspicious_data = None
+        # while retries < MAX_RETRIES:
+        #     try:
+               
+        #         break 
+        #     except json.JSONDecodeError as e:
+        #         retries += 1
+        #         if retries >= MAX_RETRIES:
+        #             raise HTTPException(status_code=500, detail="Failed to parse Gemini response after multiple attempts")
+        #         # Wait for a brief moment before retrying
+        #         time.sleep(RETRY_DELAY)
 
 
         return {"status": "success", "cars": cars_data, "suspicious_cars": suspicious_data}
