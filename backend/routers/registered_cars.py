@@ -9,11 +9,11 @@ from models import RegisteredCars
 router = APIRouter()
 
 # GET ALL REGISTERED CARS
-@router.get("/{lot_id}")
-def get_registered_cars(request: Request, lot_id: str, db: Session = db_dependency):
+@router.get("/")
+def get_registered_cars(request: Request, db: Session = db_dependency):
     try:
         # Fetch all registered cars from the database
-        cars = db.query(RegisteredCars).filter(RegisteredCars.lot_id == lot_id).all()
+        cars = db.query(RegisteredCars).all()
         
         if not cars:
             return JSONResponse(status_code=404, content={"detail": "No registered cars found"})
