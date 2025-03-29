@@ -10,6 +10,7 @@ const lots = [
 const Main = () => {
     const [selected, setSelected] = useState(0);
     const [carData, setCarData] = useState([]);
+    const [unauthorizedCars, setUnauthorizedCars] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -22,12 +23,19 @@ const Main = () => {
                 const data = await response.json();
                 if (response.ok) {
                     setCarData(data.cars || []);
+
+                    // Filter unauthorized cars
+                    const unauthorized = (data.cars || []).filter(car => car.registered_lot_id !== lots[selected].lot_id);
+                    setUnauthorizedCars(unauthorized);
                 } else {
                     setError(data.detail || "Failed to fetch data.");
                     setCarData([]);
+                    setUnauthorizedCars([]);
                 }
             } catch (err) {
                 setError(`${err}`);
+                setCarData([]);
+                setUnauthorizedCars([]);
             }
             setLoading(false);
         };
@@ -36,33 +44,29 @@ const Main = () => {
     }, [selected]);
 
     return (
-        <section id="main" className="h-full flex items-start mt-24 justify-between">
-            {/* LEFT CONTAINER */}
-            <div className="w-[40%] h-[60%] p-6 flex flex-col items-center justify-between">
+        <section id="main" className="h-full flex flex-col gap-2">
+            {/* TOP CONTAINER */}
+            <div className="w-full h-fit p-6 flex flex-row items-center gap-4">
                 <div>
-                    <h6 className="text-lg font-semibold">Select Lot Type</h6>
-                    <p className="font-bold">{lots.length} available lots</p>
+                    <h6 className="text-sm font-thin">Select Lot Type</h6>
+                    <p className="text-sm font-bold">{lots.length} available lots</p>
                 </div>
                 {lots.map((lot, i) => (
                     <button
                         key={lot.lot_id}
                         className={`${
                             selected === i ? "border-reddish text-white bg-reddish" : "border-dark-gray"
-                        } font-bold w-[40%] p-4 rounded-xl border-[1px]`}
+                        } font-bold w-fit p-4 rounded-xl border-[1px]`}
                         onClick={() => setSelected(i)}
                     >
                         {lot.lot_id}
                     </button>
                 ))}
             </div>
-
-            {/* MIDDLE LINE */}
-            <div className="w-[1.5px] h-[70%] bg-dark-gray"></div>
-
-            {/* RIGHT CONTAINER */}
-            <div className="w-full h-[60%] p-6 flex justify-center items-center">
-                {/* Car Data Info */}
-                <div className="p-4 w-full h-full rounded-xl border-[1px] border-dark-gray flex flex-col gap-4">
+            {/* BOTTOM CONTAINER */}
+            <div className="w-full h-[60%] p-6 flex justify-center items-start gap-8">
+                {/* Authorized Car Data */}
+                <div className="p-4 w-[60%] h-full rounded-xl border-[1px] border-dark-gray flex flex-col gap-4 overflow-y-scroll">
                     <h6 className="text-lg font-semibold">Cars in Lot {lots[selected].lot_id}</h6>
 
                     {loading ? (
@@ -75,7 +79,6 @@ const Main = () => {
                         <div className="overflow-x-auto">
                             {/* Table */}
                             <table className="min-w-full border-collapse border border-gray-300">
-                                {/* Table Header */}
                                 <thead>
                                     <tr className="bg-gray-200 text-gray-700 text-left">
                                         <th className="border border-gray-300 px-4 py-2">Plate Number</th>
@@ -85,9 +88,7 @@ const Main = () => {
                                         <th className="border border-gray-300 px-4 py-2">Entry Time</th>
                                     </tr>
                                 </thead>
-
-                                {/* Table Body */}
-                                <tbody>
+                                <tbody className='text-sm'>
                                     {carData.map((car, index) => (
                                         <tr key={index} className="border border-gray-300">
                                             <td className="border border-gray-300 px-4 py-2">{car.car_plate_num}</td>
@@ -95,6 +96,40 @@ const Main = () => {
                                             <td className="border border-gray-300 px-4 py-2">{car.owner_name || "Unknown"}</td>
                                             <td className="border border-gray-300 px-4 py-2">{car.registered_email || "Unknown"}</td>
                                             <td className="border border-gray-300 px-4 py-2">{car.enter_time}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
+
+                {/* Unauthorized Vehicles */}
+                <div className="p-4 w-[40%] h-full rounded-xl border-[1px] border-dark-gray flex flex-col gap-4 overflow-y-scroll">
+                    <h6 className="text-lg font-semibold text-red-600">
+                        Unauthorized Vehicles ({unauthorizedCars.length})
+                    </h6>
+
+                    {unauthorizedCars.length === 0 ? (
+                        <p className="text-gray-500">No unauthorized vehicles.</p>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full border-collapse border border-gray-300">
+                                <thead>
+                                    <tr className="bg-red-200 text-red-700 text-left">
+                                        <th className="border border-gray-300 px-4 py-2">Plate Number</th>
+                                        <th className="border border-gray-300 px-4 py-2">Registered Lot</th>
+                                        <th className="border border-gray-300 px-4 py-2">Owner Name</th>
+                                        <th className="border border-gray-300 px-4 py-2">Email</th>
+                                    </tr>
+                                </thead>
+                                <tbody className='text-sm'>
+                                    {unauthorizedCars.map((car, index) => (
+                                        <tr key={index} className="border border-gray-300 bg-red-100">
+                                            <td className="border border-gray-300 px-4 py-2">{car.car_plate_num}</td>
+                                            <td className="border border-gray-300 px-4 py-2">{car.registered_lot_id || "N/A"}</td>
+                                            <td className="border border-gray-300 px-4 py-2">{car.owner_name || "Unknown"}</td>
+                                            <td className="border border-gray-300 px-4 py-2">{car.registered_email || "Unknown"}</td>
                                         </tr>
                                     ))}
                                 </tbody>
