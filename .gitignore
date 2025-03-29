@@ -1,3 +1,4 @@
 backend/__pycache__
 backend/.env
 backend/routers/__pycache__
+frontend/node_modules

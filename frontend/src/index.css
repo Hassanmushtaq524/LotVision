@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+
+@font-face {
+  font-family: "Inter-Black";
+  src: url("./assets/fonts/Inter-Black.ttf");
+}
+
+@font-face {
+  font-family: "Inter-Light";
+  src: url("./assets/fonts/Inter-Light.ttf");
+}
+
+@font-face {
+  font-family: "Inter-Bold";
+  src: url("./assets/fonts/Inter-Bold.ttf");
+}
+
+@font-face {
+  font-family: "Inter-Thin";
+  src: url("./assets/fonts/Inter-Thin.ttf");
+}
+
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold text-gray-900;
+  }
+  
+  h1 {
+    @apply font-black text-4xl md:text-5xl;
+  }
+  
+  h2 {
+    @apply font-bold text-3xl md:text-4xl;
+  }
+  
+  h3 {
+    @apply font-bold text-2xl md:text-3xl;
+  }
+  
+  h4 {
+    @apply font-light text-xl md:text-2xl;
+  }
+  
+  h5 {
+    @apply font-light text-lg md:text-xl;
+  }
+  
+  h6 {
+    @apply font-light text-base md:text-lg;
+  }
+  
+  p {
+    @apply text-gray-700 text-base md:text-lg leading-relaxed;
+  }
+}
