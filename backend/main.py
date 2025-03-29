@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from routers.registered_cars import router as registered_cars_router
 from routers.lots import router as lots_router
 from routers.current_cars import router as current_cars_router
+from routers.flagged_cars import router as flagged_cars_router
 # from db import Base, engine, db_dependency
 from sqlalchemy.orm import Session
 from typing import Annotated
@@ -29,17 +30,14 @@ if not SECRET_KEY:
 
 
 app = FastAPI() 
-origins = [ 
-	FRONTEND_URL
-]
- 
+
 
 app.add_middleware( 
 	CORSMiddleware, 
-	allow_origins=origins, 
-	allow_credentials=True, 
-	allow_methods=["*"], 
-	allow_headers=["*"], 
+	 allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 ) 
 
 app.add_middleware(SessionMiddleware, 
@@ -53,6 +51,8 @@ app.include_router(router=registered_cars_router, prefix="/registered_cars")
 app.include_router(router=lots_router, prefix="/lots")
 # current cars route
 app.include_router(router=current_cars_router, prefix="/current_cars")
+# flagged cars route
+app.include_router(router=flagged_cars_router, prefix="/flagged_cars")
 
 
 if __name__ == "__main__": 

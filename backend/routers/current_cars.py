@@ -98,12 +98,15 @@ def get_cars(request: Request, lot_id: str, db: Session = db_dependency):
             {
                 "car_plate_num": current_car.car_plate_num,
                 "registered_lot_id": registered_car.lot_id,
+                "registered_email": registered_car.email,
+                "owner_name": registered_car.owner_name,
                 "enter_time": current_car.enter_time,
             }
             for current_car, registered_car in cars_in_lot
         ]
 
-        return {"status": "success", "lot_id": lot_id, "cars": cars_data}
+        return {"status": "success", "cars": cars_data}
+
 
     except Exception as e:
         return JSONResponse(status_code=500, content={"detail": str(e)})
