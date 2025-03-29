@@ -13,7 +13,7 @@ class AddLotBody(BaseModel):
     lot_id: str
     capacity: int
 
-# GET ALL REGISTERED CARS
+# ADD A LOT
 @router.post("/")
 def add_lots(request: Request, data: AddLotBody, db: Session = db_dependency):
     try:
