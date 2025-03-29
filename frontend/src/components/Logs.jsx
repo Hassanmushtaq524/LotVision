@@ -8,34 +8,95 @@ const Logs = () => {
 
   useEffect(() => {
     const fetchLogs = async () => {
-        let attempts = 0;
-        const maxAttempts = 10;
-        let success = false;
-      
-        while (attempts < maxAttempts && !success) {
-            console.log(attempts)
-            try {
-                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/flagged_cars/`);
-                if (!response.ok) {
-                throw new Error('Failed to fetch logs');
-                }
-                const data = await response.json();
-                setLogs(data.cars.sort((a, b) => new Date(b.flag_time) - new Date(a.flag_time)));
-                setSuspiciousLogs(data.suspicious_cars || []);
-                success = true;
-            } catch (err) {
-                attempts++;
-                if (attempts >= maxAttempts) {
-                setError(err.message);
-                }
-            } finally {
-                setLoading(false);
-            }
+      let attempts = 0;
+      const maxAttempts = 10;
+      let success = false;
+
+      while (attempts < maxAttempts && !success) {
+        try {
+          console.log(`Attempt: ${attempts + 1}`);
+
+          const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/flagged_cars/`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch logs');
+          }
+          const data = await response.json();
+          setLogs(data.cars.sort((a, b) => new Date(b.flag_time) - new Date(a.flag_time)));
+          success = true;
+
+          // After fetching logs, analyze suspicious cars
+          analyzeSuspiciousCars(data.cars);
+        } catch (err) {
+          attempts++;
+          if (attempts >= maxAttempts) {
+            setError(err.message);
+          }
+        } finally {
+          setLoading(false);
         }
-      };
-      
+      }
+    };
+
     fetchLogs();
   }, []);
+
+
+
+
+  const analyzeSuspiciousCars = async (carsData) => {
+    try {
+      const API_KEY = process.env.REACT_APP_GEMINI_KEY;
+      const prompt = generatePrompt(carsData);
+  
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+        }
+      );
+  
+      const geminiData = await response.json();
+  
+      let geminiText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text.trim();
+      console.log("Raw Gemini Text:", geminiText);
+  
+      // ✅ Handle case where JSON is wrapped in ```json ```
+      if (geminiText.startsWith("```json")) {
+        geminiText = geminiText.replace(/```json\s*/, "").replace(/```$/, "").trim();
+      }
+  
+      let parsedData = [];
+      try {
+        parsedData = JSON.parse(geminiText);
+        console.log("Parsed Suspicious Vehicles:", parsedData);
+      } catch (jsonError) {
+        console.error("Error parsing Gemini response:", jsonError);
+        parsedData = [];
+      }
+  
+      setSuspiciousLogs(parsedData);
+    } catch (error) {
+      console.error("Error analyzing suspicious vehicles:", error);
+      setSuspiciousLogs([]);
+    }
+  };
+  
+  
+
+  // 🔥 Function to generate the prompt for Gemini
+  const generatePrompt = (carsData) => {
+    let prompt = `
+      Analyze the following vehicles and flag any suspicious vehicles based on their timestamps, number of entries, and flag reasons.
+      Return only the license plate number and a note describing why it is more suspicious than other entries. Sort based on how suspicious the vehicle is. Output only 5 entries.\n 
+      Return in the format [{ "car_plate_num": "XXX123", "note": "Reason" }] for multiple cars. Do not output anything else, and the output must start with [ and end with ], and not include quotations.\n\n
+    `;
+    carsData.forEach(car => {
+      prompt += `Car Plate Number: ${car.car_plate_num}, Flag Time: ${car.flag_time}, Flag Reason: ${car.flag_reason}\n`;
+    });
+    return prompt;
+  };
 
   if (loading) {
     return <div className='w-full flex justify-center'>Loading...</div>;

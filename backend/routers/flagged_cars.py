@@ -76,9 +76,9 @@ def get_cars(request: Request, db: Session = db_dependency):
         for car in cars_data:
             prompt += f"Car Plate Number: {car['car_plate_num']}, Flag Time: {car['flag_time']}, Flag Reason: {car['flag_reason']}\n"
 
-        suspicious_data = get_gemini_analysis(prompt)
+        # suspicious_data = get_gemini_analysis(prompt)
 
-        print(suspicious_data)
-        return {"status": "success", "cars": cars_data, "suspicious_cars": suspicious_data}
+        # print(suspicious_data)
+        return {"status": "success", "cars": cars_data }
     except Exception as e:
         return JSONResponse(status_code=500, content={"detail": str(e)})
