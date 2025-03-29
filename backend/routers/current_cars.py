@@ -47,7 +47,7 @@ def add_or_remove_car(request: Request, data: AddCurrentCarsBody, db: Session = 
             flagged = True
         elif registered_car.lot_id != data.lot_id:
             # Registered car in the wrong lot
-            flag_reason = "Unauthorized Parking"
+            flag_reason = "Unauthorized Car"
             flagged = True
 
         # If flagged, add to the flagged_cars table
