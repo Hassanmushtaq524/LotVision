@@ -30,3 +30,13 @@ class CurrentCars(Base):
     car_plate_num = Column(String, ForeignKey("registered_cars.plate_num"), nullable=False)  
     enter_time = Column(DateTime, default=datetime.utcnow)
 
+
+# FlaggedCars table
+class FlaggedCars(Base):
+    __tablename__ = "flagged_cars"
+    _id = Column(Integer, primary_key=True, autoincrement=True)
+    car_plate_num = Column(String, ForeignKey("registered_cars.plate_num"), nullable=False)
+    detected_lot_id = Column(String, ForeignKey("lots.lot_id"), nullable=False)
+    registered_lot_id = Column(String, ForeignKey("lots.lot_id"), nullable=True)
+    flag_reason = Column(String, nullable=False, default="Unauthorized Parking")
+    flag_time = Column(DateTime, default=datetime.utcnow)
