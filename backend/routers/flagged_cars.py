@@ -9,16 +9,39 @@ from google import genai
 import os
 import json
 import time
+import random
 
-# Maximum number of retries to avoid infinite loop
-MAX_RETRIES = 5
-# Delay between retries (in seconds)
+
+
+MAX_RETRIES = 10
 RETRY_DELAY = 2
-
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 router = APIRouter()
+
+
+# Function to make a Gemini API request with retries
+def get_gemini_analysis(prompt):
+    for attempt in range(MAX_RETRIES):
+        try:
+            # Send request to Gemini API
+            gemini_response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt
+            )
+            gemini_response_text = gemini_response.text
+            # Attempt to parse JSON response
+            suspicious_data = json.loads(gemini_response_text)
+            return suspicious_data  # ✅ Successfully parsed response
+        except Exception as e:
+            # TODO: remove
+            print(e)
+            wait_time = RETRY_DELAY * (2 ** attempt) + random.uniform(0, 1)  # Exponential backoff
+            print(f"Rate limit hit. Retrying in {wait_time:.2f} seconds...")
+            time.sleep(wait_time)
+    return None  # If all retries fail
+
 
 # GET LOGS OF CARS
 # USE GEMINI HERE
@@ -53,29 +76,9 @@ def get_cars(request: Request, db: Session = db_dependency):
         for car in cars_data:
             prompt += f"Car Plate Number: {car['car_plate_num']}, Flag Time: {car['flag_time']}, Flag Reason: {car['flag_reason']}\n"
 
-        # Call Gemini API to analyze the data (send the prompt to Gemini)
-        gemini_response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=prompt
-        )
-        gemini_response_text = gemini_response.text
-                
-        # Attempt to parse the Gemini response text as JSON
-        suspicious_data = json.loads(gemini_response_text)
-        # retries = 0
-        # suspicious_data = None
-        # while retries < MAX_RETRIES:
-        #     try:
-               
-        #         break 
-        #     except json.JSONDecodeError as e:
-        #         retries += 1
-        #         if retries >= MAX_RETRIES:
-        #             raise HTTPException(status_code=500, detail="Failed to parse Gemini response after multiple attempts")
-        #         # Wait for a brief moment before retrying
-        #         time.sleep(RETRY_DELAY)
+        suspicious_data = get_gemini_analysis(prompt)
 
-
+        print(suspicious_data)
         return {"status": "success", "cars": cars_data, "suspicious_cars": suspicious_data}
     except Exception as e:
         return JSONResponse(status_code=500, content={"detail": str(e)})

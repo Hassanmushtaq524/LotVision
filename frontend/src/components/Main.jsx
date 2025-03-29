@@ -19,11 +19,10 @@ const Main = () => {
             setLoading(true);
             setError(null);
             try {
-                const response = await fetch(`http://localhost:8000/current_cars/${lots[selected].lot_id}`, { method: "GET" });
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/current_cars/${lots[selected].lot_id}`, { method: "GET" });
                 const data = await response.json();
                 if (response.ok) {
-                    setCarData(data.cars || []);
-
+                    setCarData(data.cars.sort((a, b) => new Date(b.enter_time) - new Date(a.enter_time)) || []);
                     // Filter unauthorized cars
                     const unauthorized = (data.cars || []).filter(car => car.registered_lot_id !== lots[selected].lot_id);
                     setUnauthorizedCars(unauthorized);

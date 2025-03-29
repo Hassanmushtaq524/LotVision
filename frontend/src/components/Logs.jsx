@@ -9,27 +9,28 @@ const Logs = () => {
   useEffect(() => {
     const fetchLogs = async () => {
         let attempts = 0;
-        const maxAttempts = 3;
+        const maxAttempts = 10;
         let success = false;
       
         while (attempts < maxAttempts && !success) {
-          try {
-            const response = await fetch('http://localhost:8000/flagged_cars/');
-            if (!response.ok) {
-              throw new Error('Failed to fetch logs');
+            console.log(attempts)
+            try {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/flagged_cars/`);
+                if (!response.ok) {
+                throw new Error('Failed to fetch logs');
+                }
+                const data = await response.json();
+                setLogs(data.cars.sort((a, b) => new Date(b.enter_time) - new Date(a.enter_time)));
+                setSuspiciousLogs(data.suspicious_cars || []);
+                success = true;
+            } catch (err) {
+                attempts++;
+                if (attempts >= maxAttempts) {
+                setError(err.message);
+                }
+            } finally {
+                setLoading(false);
             }
-            const data = await response.json();
-            setLogs(data.cars);
-            setSuspiciousLogs(data.suspicious_cars || []);
-            success = true;
-          } catch (err) {
-            attempts++;
-            if (attempts >= maxAttempts) {
-              setError(err.message);
-            }
-          } finally {
-            setLoading(false);
-          }
         }
       };
       
