@@ -34,7 +34,10 @@ def add_or_remove_car(request: Request, data: AddCurrentCarsBody, db: Session = 
         # Create new CurrentCars entry first
         new_car = CurrentCars(lot_id=data.lot_id, car_plate_num=data.car_plate_num)
         db.add(new_car)
-
+        # Commit the new car first
+        db.commit()
+        db.refresh(new_car)
+        
         # Check if the car is registered
         registered_car = db.query(RegisteredCars).filter(RegisteredCars.plate_num == data.car_plate_num).first()
         
@@ -50,9 +53,6 @@ def add_or_remove_car(request: Request, data: AddCurrentCarsBody, db: Session = 
             flag_reason = "Unauthorized Car"
             flagged = True
 
-        # Commit the new car first
-        db.commit()
-        db.refresh(new_car)
 
         # If flagged, add to the flagged_cars table (AFTER committing CurrentCars)
         if flagged:
@@ -80,14 +80,14 @@ def add_or_remove_car(request: Request, data: AddCurrentCarsBody, db: Session = 
 
 
 
-# GET ALL CURRENT CARS IN A LOT
+# GET ALL CURRENT CARS IN A LOT (INCLUDING UNREGISTERED CARS)
 @router.get("/{lot_id}")
 def get_cars(request: Request, lot_id: str, db: Session = db_dependency):
     try:
-        # Fetch all cars currently in the given lot along with their registered lot info
+        # Fetch all cars currently in the given lot, including unregistered ones
         cars_in_lot = (
             db.query(CurrentCars, RegisteredCars)
-            .join(RegisteredCars, CurrentCars.car_plate_num == RegisteredCars.plate_num)
+            .outerjoin(RegisteredCars, CurrentCars.car_plate_num == RegisteredCars.plate_num)  # LEFT JOIN
             .filter(CurrentCars.lot_id == lot_id)
             .all()
         )
@@ -99,9 +99,9 @@ def get_cars(request: Request, lot_id: str, db: Session = db_dependency):
         cars_data = [
             {
                 "car_plate_num": current_car.car_plate_num,
-                "registered_lot_id": registered_car.lot_id,
-                "registered_email": registered_car.email,
-                "owner_name": registered_car.owner_name,
+                "registered_lot_id": registered_car.lot_id if registered_car else None,
+                "registered_email": registered_car.email if registered_car else None,
+                "owner_name": registered_car.owner_name if registered_car else None,
                 "enter_time": current_car.enter_time,
             }
             for current_car, registered_car in cars_in_lot
@@ -109,7 +109,7 @@ def get_cars(request: Request, lot_id: str, db: Session = db_dependency):
 
         return {"status": "success", "cars": cars_data}
 
-
     except Exception as e:
         return JSONResponse(status_code=500, content={"detail": str(e)})
+
 
