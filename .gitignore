@@ -3,3 +3,6 @@ backend/.env
 backend/routers/__pycache__
 frontend/node_modules
 backend/env
+backend/requirements-2.txt
+frontend/.env
+frontend/.env

@@ -31,13 +31,13 @@ def add_or_remove_car(request: Request, data: AddCurrentCarsBody, db: Session = 
                 "lot_id": data.lot_id
             }
 
-        # Check if the car is registered
-        registered_car = db.query(RegisteredCars).filter(RegisteredCars.plate_num == data.car_plate_num).first()
-
-        # Car is entering, create new CurrentCars entry
+        # Create new CurrentCars entry first
         new_car = CurrentCars(lot_id=data.lot_id, car_plate_num=data.car_plate_num)
         db.add(new_car)
 
+        # Check if the car is registered
+        registered_car = db.query(RegisteredCars).filter(RegisteredCars.plate_num == data.car_plate_num).first()
+        
         flagged = False
         flag_reason = None
 
@@ -50,7 +50,11 @@ def add_or_remove_car(request: Request, data: AddCurrentCarsBody, db: Session = 
             flag_reason = "Unauthorized Car"
             flagged = True
 
-        # If flagged, add to the flagged_cars table
+        # Commit the new car first
+        db.commit()
+        db.refresh(new_car)
+
+        # If flagged, add to the flagged_cars table (AFTER committing CurrentCars)
         if flagged:
             flagged_car = FlaggedCars(
                 car_plate_num=data.car_plate_num,
@@ -60,9 +64,7 @@ def add_or_remove_car(request: Request, data: AddCurrentCarsBody, db: Session = 
                 flag_time=datetime.utcnow()
             )
             db.add(flagged_car)
-
-        db.commit()
-        db.refresh(new_car)
+            db.commit()  # Commit flagged car separately
 
         return {
             "status": "success",

@@ -20,7 +20,7 @@ const Logs = () => {
                 throw new Error('Failed to fetch logs');
                 }
                 const data = await response.json();
-                setLogs(data.cars.sort((a, b) => new Date(b.enter_time) - new Date(a.enter_time)));
+                setLogs(data.cars.sort((a, b) => new Date(b.flag_time) - new Date(a.flag_time)));
                 setSuspiciousLogs(data.suspicious_cars || []);
                 success = true;
             } catch (err) {
