@@ -110,32 +110,32 @@ const Logs = () => {
     <section className='w-full mt-12 p-[24px]'>
       <div className='flex gap-8'>
         {/* LEFT CONTAINER: Flagged Cars */}
-        <div className='rounded-xl w-full h-[60vh] overflow-y-scroll p-2 border-[1px] border-dark-gray flex-1'>
-          <div className='flex flex-col gap-4 p-[24px]'>
-            <h6 className='font-bold'>Flagged Car Logs</h6>
-            <table className="table-auto w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-200 text-gray-700 text-left">
-                  <th className="border border-gray-300 px-4 py-2">Car Plate Number</th>
-                  <th className="border border-gray-300 px-4 py-2">Detected Lot ID</th>
-                  <th className="border border-gray-300 px-4 py-2">Registered Lot ID</th>
-                  <th className="border border-gray-300 px-4 py-2">Flag Reason</th>
-                  <th className="border border-gray-300 px-4 py-2">Flag Time</th>
-                </tr>
-              </thead>
-              <tbody className='text-sm'>
-                {logs.map((car, index) => (
-                  <tr key={index}>
-                    <td className="border border-gray-300 px-4 py-2">{car.car_plate_num}</td>
-                    <td className="border border-gray-300 px-4 py-2">{car.detected_lot_id}</td>
-                    <td className="border border-gray-300 px-4 py-2">{car.registered_lot_id}</td>
-                    <td className="border border-gray-300 px-4 py-2">{car.flag_reason}</td>
-                    <td className="border border-gray-300 px-4 py-2">{car.flag_time}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className='rounded-xl w-[60vw] h-[60vh] p-[24px] border-[1px] border-dark-gray flex flex-col gap-4'>
+          <h6 className='font-bold'>Flagged Car Logs</h6>
+            <div className='overflow-y-scroll'>
+                <table className="table-auto border-collapse">
+                <thead>
+                    <tr className="bg-gray-200 text-gray-700 text-left">
+                    <th className="border border-gray-300 px-4 py-2">Car Plate Number</th>
+                    <th className="border border-gray-300 px-4 py-2">Detected Lot ID</th>
+                    <th className="border border-gray-300 px-4 py-2">Registered Lot ID</th>
+                    <th className="border border-gray-300 px-4 py-2">Flag Reason</th>
+                    <th className="border border-gray-300 px-4 py-2">Flag Time</th>
+                    </tr>
+                </thead>
+                <tbody className='text-sm'>
+                    {logs.map((car, index) => (
+                    <tr key={index}>
+                        <td className="border border-gray-300 px-4 py-2">{car.car_plate_num}</td>
+                        <td className="border border-gray-300 px-4 py-2">{car.detected_lot_id}</td>
+                        <td className="border border-gray-300 px-4 py-2">{car.registered_lot_id}</td>
+                        <td className="border border-gray-300 px-4 py-2">{car.flag_reason}</td>
+                        <td className="border border-gray-300 px-4 py-2">{car.flag_time}</td>
+                    </tr>
+                    ))}
+                </tbody>
+                </table>
+            </div>
         </div>
 
         {/* RIGHT CONTAINER: Suspicious Vehicles */}
@@ -145,7 +145,7 @@ const Logs = () => {
             {suspiciousLogs.length > 0 ? (
               <table className="table-auto w-full border-collapse overflow-y-scroll">
                 <thead>
-                  <tr className="bg-red-200 text-gray-700 text-left">
+                  <tr className="bg-pink-200 text-pink-700 text-left">
                     <th className="border border-gray-300 px-4 py-2">Car Plate Number</th>
                     <th className="border border-gray-300 px-4 py-2">Suspicious Note</th>
                   </tr>

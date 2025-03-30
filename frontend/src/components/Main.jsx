@@ -107,7 +107,7 @@ const Main = () => {
 
                 {/* Unauthorized Vehicles */}
                 <div className="p-4 w-[40%] h-full rounded-xl border-[1px] border-dark-gray flex flex-col gap-4 overflow-y-scroll">
-                    <h6 className="text-lg font-semibold text-red-600">
+                    <h6 className="text-lg font-semibold text-pink-600">
                         Unauthorized Vehicles ({unauthorizedCars.length})
                     </h6>
 
@@ -117,7 +117,7 @@ const Main = () => {
                         <div className="overflow-x-auto">
                             <table className="min-w-full border-collapse border border-gray-300">
                                 <thead>
-                                    <tr className="bg-red-200 text-red-700 text-left">
+                                    <tr className="bg-pink-200 text-pink-700 text-left">
                                         <th className="border border-gray-300 px-4 py-2">Plate Number</th>
                                         <th className="border border-gray-300 px-4 py-2">Registered Lot</th>
                                         <th className="border border-gray-300 px-4 py-2">Owner Name</th>
@@ -126,7 +126,7 @@ const Main = () => {
                                 </thead>
                                 <tbody className='text-sm'>
                                     {unauthorizedCars.map((car, index) => (
-                                        <tr key={index} className="border border-gray-300 bg-red-100">
+                                        <tr key={index} className="border border-gray-300 bg-pink-100">
                                             <td className="border border-gray-300 px-4 py-2">{car.car_plate_num}</td>
                                             <td className="border border-gray-300 px-4 py-2">{car.registered_lot_id || "N/A"}</td>
                                             <td className="border border-gray-300 px-4 py-2">{car.owner_name || "Unknown"}</td>

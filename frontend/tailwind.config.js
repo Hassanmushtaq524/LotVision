@@ -7,10 +7,10 @@
   theme: {
     extend: {
       colors: {
-        'maroon': "#7D0A0A",
-        'reddish': "#BF3131",
+        'maroon': "#92007E",
+        'reddish': "#92007E",
         'dark-gray': '#9E9D9E',
-        'light-gray': '#9E9D9E',
+        'light-gray': '#9E9D9E'
       },
       fontFamily: {
         fontFamily: {
