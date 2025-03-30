@@ -1,0 +1,4 @@
+License_Plate,Original_Text,Confidence,Validation_Score,Combined_Score,Source,Frame
+T20SRE,T20SRE,0.9665,1.0000,0.9665,4.MOV,186
+R27VFY,R27VFY,0.9853,1.0000,0.9853,5.MOV,204
+L97PGK,L97-PGK,0.9589,1.0000,0.9589,3.MOV,162
