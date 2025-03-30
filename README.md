@@ -5,7 +5,7 @@ This project is a **Parking Lot Management System** with:
 - **Frontend:** React + TailwindCSS
 - **Backend:** FastAPI (Python)
 - **AI Integration:** Google Gemini for suspicious vehicle analysis
-- **Camera Integration:** cv2, NumPy, PaddleOCR
+- **Camera Integration:** cv2, PaddleOCR
 
 The system logs vehicle entries, flags unauthorized cars, and uses **Gemini AI** to detect suspicious activity based on timestamps and entry patterns.
 
@@ -38,7 +38,7 @@ GEMINI_API_KEY=your-google-gemini-api-key
 
 #### 📌 Run the FastAPI server
 ```sh
-uvicorn main:app --reload
+python main.py
 ```
 FastAPI will run at **http://127.0.0.1:8000** 🚀
 
@@ -57,7 +57,7 @@ REACT_APP_GEMINI_API_KEY=your-google-gemini-api-key
 
 #### 📌 Start the frontend
 ```sh
-npm start
+npm run start
 ```
 The React app will run at **http://localhost:3000** 🎨
 ---
@@ -82,9 +82,10 @@ This project includes a **real-time License Plate Recognition (LPR)** module tha
 > 🔄 The ML module runs separately and interfaces with the backend via REST API — plug-and-play style
 
 ### Run the Detector:
-
-python main.py --camera 0         # Live camera feed
-python main.py --video path.mp4   # Video input
+```sh
+cd ../camera
+python number_plate 7.py
+```
 
 ---
 
@@ -99,9 +100,9 @@ python main.py --video path.mp4   # Video input
 ## ⚡ Tech Stack
 - **Frontend:** React, TailwindCSS
 - **Backend:** FastAPI, SQLAlchemy
-- **Database:** PostgreSQL
+- **Database:** SQLite
 - **AI Integration:** Google Gemini API
-
+- **Camera:** OpenCV, PaddleOCR
 ---
 
 ## 🛠️ Future Improvements
