@@ -5,33 +5,10 @@ This project is a **Parking Lot Management System** with:
 - **Frontend:** React + TailwindCSS
 - **Backend:** FastAPI (Python)
 - **AI Integration:** Google Gemini for suspicious vehicle analysis
+- **Camera Integration:** cv2, NumPy, PaddleOCR
 
 The system logs vehicle entries, flags unauthorized cars, and uses **Gemini AI** to detect suspicious activity based on timestamps and entry patterns.
 
----
-
-## 📂 Project Structure
-```
-./
-├── backend/       # FastAPI backend
-│   ├── main.py    # API entry point
-│   ├── models.py  # Database models
-│   ├── routes/    # API routes
-│   ├── db.py      # Database connection
-│   ├── .env       # Environment variables
-│   └── ...
-├── frontend/      # React + Tailwind frontend
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── App.js
-│   │   ├── index.js
-│   │   └── ...
-│   ├── .env       # Environment variables
-│   └── package.json
-├── README.md      # Project documentation
-└── ...
-```
 
 ---
 
@@ -83,6 +60,31 @@ REACT_APP_GEMINI_API_KEY=your-google-gemini-api-key
 npm start
 ```
 The React app will run at **http://localhost:3000** 🎨
+---
+
+## 🧠 ML Integration: License Plate Detection
+
+This project includes a **real-time License Plate Recognition (LPR)** module that uses:
+- **OpenCV** for plate detection
+- **PaddleOCR** for character recognition
+- **Multithreading** for fast batch processing
+- **Smart filtering & validation** for accurate results
+
+### How it Works:
+- Captures frames from live camera or video files.
+- Detects and extracts potential license plate regions.
+- Recognizes text using OCR and validates plate formats.
+- Sends high-confidence plate numbers directly to the backend API:
+
+---
+- The backend stores and flags unauthorized entries for AI analysis
+
+> 🔄 The ML module runs separately and interfaces with the backend via REST API — plug-and-play style
+
+### Run the Detector:
+
+python main.py --camera 0         # Live camera feed
+python main.py --video path.mp4   # Video input
 
 ---
 
